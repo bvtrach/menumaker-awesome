@@ -1,0 +1,245 @@
+@node Intro
+@chapter Introduction
+
+MenuMaker is an utility aimed at creating the menus for so called lightweight desktop environments (@acronym{DE}) @ref{Supported DEs} for X Window system running on top of a @acronym{UNIX}-like @acronym{OS}. It is designed to address two problems concerned with such environments:
+
+@itemize
+@item Lack of tools, either @acronym{GUI} or command-line, for maintining the environment configuration. The configuration is often stored in a plain text file and no tools for its maintenance are provided. At best, there will be a generic author-supplied config file to get started. The rest is up to you as a user.
+@item Lack of central registry of installed applications. Yes, it can be a real pain to keep track of the installed applications especially if you work on several computers with different operating systems, desktop environments and/or application sets.
+@end itemize
+
+The MenuMaker can help you with both. It can find lots of applications installed in the system and generate a nice menu for the environment of your choice with a single command call. The generated menu may be later tailored to your specific needs.
+
+@node The problem
+@chapter The problem MenuMaker is intended to solve
+
+Modern graphical desktop environments for UNIX-like systems can be divided into two categories: the fully-blown (or heavyweight) DEs such as GNOME, KDE and, to lesser extent, CDE, and lightweight DEs, the Black/Flux/Open 'boxes, Xfce, IceWM and many many others. The former are the real fully-blown self-consistent environments with their own specific applications, configurators, menu systems etc. in a way of their commercial counterparts such as M$ Windows and Apple MacOS(X). They present everything one might need for the work (along with tons of stuff one might not) but are bulky, resource hungry and often simply overloaded with features.
+
+In the other end there are the lightweight desktop environments comprised of (usually personally selected) window, file, desktop and session managers along with a number of standalone applications. They may look cooler, work faster and consume less. They are the choice of many advanced users. But they are of course not perfect (as nothing really is). They are usually not so user-friendly; the configuration process can simply scare the casual person away due to amount of hand-crafting.
+
+@node The solution
+@chapter How does MenuMaker work (some basic principles)
+
+If you are familiar with contemporary @acronym{UNIX} programming, you should be aware of two widespread development tools used to configure software package and to adapt it to the site where the package is about to be built - (x)mkmf and @acronym{GNU} Autoconf.
+
+The former takes vendor-specific database as input to determine the features of particular site. This solution albeit being simple has one major drawback, namely: either vendor or site maintainer may appear to be lazy which will result in incomplete, inaccurate or obsolete database. With the multitude of currently existing systems this is simply inavoidable (even if they're all pretend to be UNIX :).
+
+On the contrary, the Autoconf knowns very few about the site @emph{a priori} and fills the blanks by making the guesses about specific features and testing them right away. It makes the (rightful) assumption that despite the fact that systems differ from each other they share many common properties: naming conventions, file system hierarchies, system calls etc. This similarity makes it possible to deduce some generic rules covering many of the systems' aspects.
+
+For example, given a need to find working C compiler, one might recall that its canonic name on UNIX is 
+@command{cc} which can be found in one of directories enlisted in @env{PATH} environment variable, and if our site is running Linux then most likely we have a @acronym{GCC} C compiler named @command{gcc}. And once we've got something resembling a C compiler one might test it against @code{main()@{@}} one-liner to see if it actually is.
+
+That way simple and straightforward feature database gets replaced with a more generic collection of rules which may be called @dfn{knowledge base} to reflect a change from "passive" to "active" database content.
+
+This is also a transition form simple @emph{what} to look for to a more generic @emph{how} to find what we need.
+
+And this is what the MenuMaker stands for: @emph{contain rules instead of data}.
+
+As stated in its headline, the MenuMaker is heuristics-driven. This generally means that it may be not 100% accurate at guessing. The ultimate goal for MenuMaker is @emph{correct identification of 99% programs on 99% of sanely configured systems}.
+
+Another idea behind MenuMaker is an implementation of its knowledge base. Consider traditional approach: there are two distinct notions, two parts of a puzzle - the data and the code that operates on that data. The code is written in some "serious" programming language, such as C, and the data is laid out in a database-like structure. The question is: how do the rules fit into this? For them, a new zillion-and-first programming language is invented. It may compile to either some sort of bytecode or directly to machine code to produce... another data! In "real world" this is called an object-oriented database system, folks.
+Once again, we got distinct data and code - looks like nothing has changed.
+
+The MenuMaker is written in Python, a dynamic object-oriented language. These features of Python made it possible to create the entire system with only one language: here, Python is used as both implementation and data description language. Moreover, it can be stated that in MenuMaker there is @emph{no distinction between data and code} - each database entry is in fact a chunk of code that operates on itself as well as on other entries.
+
+@node Supported DEs
+@chapter The environments supported by MenuMaker
+
+Here are some environment-specific notes:
+
+@itemize
+
+@item WindowMaker @url{http://www.windowmaker.org}
+
+@item IceWM @url{http://www.icewm.org}
+
+No icons in menu yet.
+
+@item FluxBox @url{http://fluxbox.sourceforge.net}
+
+@item BlackBox
+
+No standard user-specific menu file; use -c option.
+
+@item OpenBox3
+
+@item Deskmenu
+
+@item Xfce4 @url{http://www.xfce.org}
+
+No icons in menu yet.
+
+@item PekWM @url{http://www.pekwm.org}
+
+@end itemize
+
+Note support for other environemnts/window managers may be added in future.
+
+@node Installation
+@chapter How to install MenuMaker
+
+MenuMaker is currently shipped as the @acronym{GNU} Autotools package which means it obeys the default @command{configure; make; make install} procedure. However, the installataion is not required as it can be run in-place, i.e. right from unpacked source package. @xref{Try-and-throw}.
+
+To install the MenuMaker into your system you need to perform the following steps:
+
+@itemize
+@item Configure. Currently there are two meaningful configuration parameters: @option{--prefix} and @option{--with-python}.
+
+@option{--prefix} is used to specify the root directory where to install the package. Default is @file{/usr/local}.
+
+@option{--with-python} is used to pick up specific Python executable to use. If not specified, default Python executable is @command{python}. Either simple (@command{python2.4}) or full (@command{/opt/bin/python}) paths can be used. This option is useful if you have several Python versions installed. Note that it is best to use generic executable and not a versioned one (such as @command{python2.4}) to retain the compability with future Python versions.
+
+@item Make. Since MenuMaker is a pure Python application, this command does nothing and may be omitted.
+
+@item Make install. This step installs all required files onto the system under the prefix specified in configuration step. When installed in a system directory, like @file{/usr}, this step normally requires root priveliges. Note for package maintainers: MenuMaker is aware of standard install-time relocation procedure. That is, a command @command{make install DESTDIR=/tmp/root} will install everything in a fake root directory @file{/tmp/root} instead of default @file{/}, where it can be picked up later by the system's packaging software.
+@end itemize
+
+@node Usage
+@chapter How to use MenuMaker
+
+As mentioned in @ref{Installation}, MenuMaker can be run in-place, i.e. right off the unpacked source package, which is useful if you want just want to @ref{Try-and-throw} it.
+
+Currently MenuMaker provides only the command-line interface whose command is called @command{mmaker}. This is a non-interactive command suitable for batch usage (from shell scripts, for example). It has no configuration files and thus relies solely on supplied command-line arguments.
+
+
+The basic command-line syntax is: @ref{Usage examples}
+
+@example
+mmaker @{opt1 opt2 ...@} frontend
+@end example
+
+
+@strong{Note that this section may be not 100% accurate. Please refer to the MenuMaker on-line help for exact information.}
+
+Where @emph{frontend} is basically the environment you want the menu for. It is a case-insensitive string. @ref{Supported DEs}
+
+Here is a description of available options:
+
+@itemize
+
+@item @option{-h}, @option{--help} prints full on-line help about available MenuMaker options.
+
+@item @option{--version} prints version information.
+
+@item @anchor{-v}@option{-v}, @option{--verbose} increases verbosity level. May be specified more than once to get @strong{lots} of output. By default, MenuMaker runs silently. Note that all the output gets dumped to the @file{stderr} channel therefore it doesn't interfere with the menu output in any way. ...
+
+@item @anchor{-f}@option{-f}, @option{--force} forces overwriting existing files. By default, MenuMaker refuses to overwrite any existing files to guard against accidental destruction of a hand-crafted work.
+
+@item @option{-c}, @option{--stdout} redirects menu output to the standard output channel. The default behavior is to dump the menu to the environment's user-specific menu file (such as @file{~/.fluxbox/menu} for FluxBox). Note that some supported environments do not have user-specific menu file hence this option is a must for them. ...
+
+@item @option{-i} produces includable output that contains only the generated parts of the menu, leaving off  prologue/epilogue, system entries etc. ... By default, MenuMaker produces complete fully usable menu that requires no manual tweaking. Note that this option @strong{must} be used in conjunction with @option{-c}...
+
+@item @option{-p}, @option{--retain-path} instructs MenuMaker to always retain full path names, which is sometimes useful for debugging. The default behavior is to omit paths where possible. For example, if the full path for Xterm is @command{/usr/X11R6/bin/xterm} and the directory @file{/usr/X11R6/bin} was (@strong{at a time of scanning!}) in PATH environment variable, it's reasonable to leave the directory component off thus yielding simple @command{xterm} as a command.
+
+@item @option{-t} specifies the terminal emulator to use for console applications. This option accepts a case-insensitive terminal name. If not specified, MenuMaker will try to pick up the terminal emulator by itself according to its own preference list.
+
+@item @anchor{Method switch}@option{--no-desktop}, @option{--no-legacy}, @option{--no-debian} disable specific search methods @ref{Search methods}. By default, everything is enabled.
+
+@item @option{-s}, @option{--skip} followed by a comma-separated list of (case-insensitive) categories you'd want to omit. Examples: @command{-s Console}, @command{--skip=KDE,GNOME,Xfce} ...
+@end itemize
+
+@node Try-and-throw
+@chapter Running MenuMaker without installation
+
+MenuMaker can also be run right off the unpacked source package. The command and its argumants remain the same. @ref{Usage}. So, usually command will look like:
+
+@example
+./mmaker ...
+@end example
+
+However, MenuMaker startup script expects @command{/usr/bin/python} to be the working Python interpreter. If it's not the case, MenuMaker can be specified as the first argument to your specific Python interpreter as follows:
+
+@example
+/opt/bin/python mmaker ...
+@end example
+
+@node Usage examples
+@chapter Here are some sample MenuMaker invokations
+
+@noindent
+The simplest possible MenuMaker invokation is just like this:
+@example
+mmaker FluxBox
+@end example
+
+This command will silently create full menu for the FluxBox and dump it into @file{~/.fluxbox/menu}. @strong{But} it will fail if that file already exists since default MenuMaker behavior is to refuse to overwrite existing files. @xref{-f}.
+
+
+@noindent
+To always succeed, use the following:
+@example
+mmaker -f FluxBox
+@end example
+
+
+@noindent
+Note that the frontend is a case-insensitive string thus the following are OK as well:
+@example
+mmaker fLUXbOX
+mmaker fluxbox
+@end example
+
+
+@noindent
+Some frontends have several names hence the following commands are the same:
+@example
+mmaker WMaker
+mmaker WindowMaker
+@end example
+
+
+@noindent
+By default, MenuMaker runs silently. To get some progress info, use -v option:
+@example
+mmaker -v OpenBox
+@end example
+
+
+@noindent
+The following command creates system-wide WindowMaker menu instead of user-specific one:
+@example
+mmaker -fvcp windowmaker > /etc/WindowMaker/WMRootMenu
+@end example
+
+This command will likely require root priviligies.
+-p may be helpful here since different users may have different PATH sets.
+
+
+@noindent
+Shell command may be used to combine MenuMaker-generated menu with some other hand-crafted parts:
+@example
+@{ cat ~/.blackbox/menu.pre; mmaker -fci blackbox; cat ~/.blckbox/menu.post @} > ~/.blackbox/menu
+@end example
+
+This trick may be useful if the generated part can not be simply #include'd due to the menu file format limitaion.
+
+
+@noindent
+This example shows how to override the MenuMaker's default terminal emulator selection:
+@example
+mmaker -t Xfterm Xfce
+@end example
+
+
+@noindent
+This one will help to make your menu @strong{much} smaller:
+@example
+mmaker --skip=KDE,GNOME,Xfce pekwm
+@end example
+
+
+
+@node Search methods
+@chapter Currently implemented knowlegde bases / scanners
+
+Note each method may be switched off with command-line option @xref{Method switch}.
+
+@itemize
+@item Legacy. This is the knowledge for the legacy applications. This was the first one to appear in MenuMaker. It utilizes advanced search algorithms to resolve complicated cases where other methods fail.
+
+@item Desktop. This is the .desktop scanner. The .desktop files are the @emph{de-facto} standard for new applications for all major heavyweight desktop environments (KDE, GNOME) as defined in @url{http://www.freedesktop.org}. It is believed that in near future every GUI application will have the corresponding .desktop file which will vastly simplify the task of menu generation. However, don't expect it for old, unsupported or console programs.
+
+@item Debian. Debian @acronym{GNU}/Linux project @url{http://www.debian.org} maintains one of the largest open-source software repository.More importantly, the Debian packaging policy obligates package maintainer to create menu entries for all relevant programs. MenuMaker contains cached Debian menu database and can perform a site scan against it.
+
+@end itemize
+@c vim:wrap:lbr:

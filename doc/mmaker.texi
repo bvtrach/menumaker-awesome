@@ -1,0 +1,45 @@
+\input texinfo @c -*-texinfo-*-
+@c %**start of header
+@setfilename mmaker.info
+@settitle MenuMaker
+@c %**end of header
+
+@copying
+Copyright @copyright{} 2002, 2003, 2004, 2005  Oleg A. Khlybov
+@end copying
+
+@titlepage
+@title mmaker -- a command line version of MenuMaker
+@page
+@vskip 0pt plut 1filll
+@insertcopying
+@end titlepage
+
+@contents
+
+@ifnottex
+@node Top
+@top MenuMaker
+@insertcopying
+@end ifnottex
+
+@menu
+* Intro::           What is MenuMaker?
+* The problem::     Why it is needed?
+* The solution::    How does it work?
+
+* Installation::
+* Try-and-throw::   Running MenuMaker without installation
+* Usage::
+* Usage examples::
+
+* Supported DEs::
+* Search methods::
+@end menu
+
+MenuMaker home page is @url{http://menumaker.sourceforge.net}
+Main download page is @url{http://www.sourceforge.net/projects/menumaker}
+
+@include intro.texi
+
+@bye
