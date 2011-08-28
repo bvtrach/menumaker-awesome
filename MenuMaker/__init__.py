@@ -32,6 +32,7 @@ fronts = {
 	Kw("IceWM")			: KwS("IceWM"),
 	Kw("BlackBox")		: KwS("BlackBox"),
 	Kw("FluxBox")		: KwS("FluxBox"),
+        Kw("Awesome") : KwS("Awesome"),
 	Kw("PekWM")			: KwS("PekWM"),
 	Kw("Deskmenu")		: KwS("Deskmenu"),
 	Kw("Xfce4")			: KwS("Xfce", "Xfce4"),

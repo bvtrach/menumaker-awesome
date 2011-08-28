@@ -200,7 +200,7 @@ class xterm(_Terminal) :
 class xvt(_Terminal) : # FIXME : do we need a separate entry for rxvt?
 	name = "Rxvt"
 	comment = "X terminal emulator"
-	exes = ["rxvt", "xvt"]
+	exes = ["urxvt", "rxvt", "xvt"]
 	keywords = KwS(TerminalEmulator)
 
 
